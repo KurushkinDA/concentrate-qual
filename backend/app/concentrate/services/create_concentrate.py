@@ -1,0 +1,26 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.concentrate.models import Concentrate
+from app.concentrate.schemas import SConcentrateCreate, SConcentrateRead
+from app.concentrate.dao import ConcentrateDAO
+from app.schemas import ResponseWithData
+
+async def create_concentrate_service(
+    session: AsyncSession,
+    data: SConcentrateCreate,
+    user_id: int
+) -> ResponseWithData[SConcentrateRead]: 
+    new_concentrate = await ConcentrateDAO.add(
+        session,
+        name=data.name,
+        iron=data.iron,
+        silicon=data.silicon,
+        aluminum=data.aluminum,
+        calcium=data.calcium,
+        sulfur=data.sulfur,
+        report_month=data.report_month,
+        user_id=user_id
+    )
+    return ResponseWithData(
+        message="Показатели успешно добавлены",
+        data=SConcentrateRead.model_validate(new_concentrate)
+    )

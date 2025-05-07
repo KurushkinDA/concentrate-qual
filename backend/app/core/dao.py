@@ -20,8 +20,17 @@ class BaseDAO(Generic[T]):
         return result.scalar_one_or_none()
 
     @classmethod
-    async def find_all(cls, session: AsyncSession, **filters) -> Sequence[T]:
-        query = select(cls.model).filter_by(**filters)
+    async def find_all(
+        cls,
+        session: AsyncSession,
+        options: Optional[list] = None,
+        **filters
+    ) -> Sequence[T]:
+        query = select(cls.model)
+        if options:
+            query = query.options(*options)
+        if filters:
+            query = query.filter_by(**filters)
         result = await session.execute(query)
         return result.scalars().all()
 

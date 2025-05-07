@@ -1,6 +1,7 @@
 from sqlalchemy import String, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
+from app.concentrate.models import Concentrate
 
 
 class User(Base): 
@@ -10,5 +11,5 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), nullable=False, index=True, unique=True)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    concentrates = relationship("Concentrate", back_populates="user")
+    concentrates = relationship(Concentrate, back_populates="user")
 
