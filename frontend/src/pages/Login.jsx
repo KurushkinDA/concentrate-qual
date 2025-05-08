@@ -10,7 +10,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await apiFetch('/users/login', {
+      await apiFetch('/users/login', {
         username,
         password,
       });

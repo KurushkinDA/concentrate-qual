@@ -1,31 +1,23 @@
-const API_URL = 'http://localhost:8000';
-
 export async function apiFetch(path, data = null, method = 'POST') {
-  const options = {
+  const response = await fetch(`http://localhost:8000${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-  };
-
-  if (data && method !== 'GET') {
-    options.body = JSON.stringify(data);
-  }
-
-  const response = await fetch(`${API_URL}${path}`, options);
+    body: data ? JSON.stringify(data) : null,
+  });
 
   const text = await response.text();
-  console.log('RAW RESPONSE:', text);
-
   let json = {};
   try {
     json = JSON.parse(text);
   } catch (_) {}
 
   if (!response.ok) {
-    console.error('Ошибка запроса:', json);
-    throw new Error(json.detail || 'Ошибка запроса');
+    const error = new Error(json.detail || 'Ошибка запроса');
+    error.status = response.status;
+    throw error;
   }
 
   return json;

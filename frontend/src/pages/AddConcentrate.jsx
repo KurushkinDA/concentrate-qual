@@ -1,15 +1,17 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Header from '../components/Header';
 import { apiFetch } from '../api';
 import { HotTable } from '@handsontable/react';
-import { registerAllModules } from 'handsontable/registry'; 
+import { registerAllModules } from 'handsontable/registry';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import 'handsontable/dist/handsontable.full.min.css';
 
 registerAllModules();
 
 export default function AddConcentrate() {
   const hotTableRef = useRef(null);
-  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const columns = [
     { data: 'name', type: 'text' },
@@ -45,12 +47,16 @@ export default function AddConcentrate() {
         });
         successCount++;
       } catch (err) {
-        console.error('Ошибка при добавлении:', err);
+        if (err.status === 401) {
+          toast.error(err.message);
+          setTimeout(() => navigate('/login'), 1000);
+          return;
+        }
         failCount++;
       }
     }
 
-    setMessage(`Добавлено: ${successCount}, ошибок: ${failCount}`);
+    toast.info(`Добавлено: ${successCount}, ошибок: ${failCount}`);
   };
 
   return (
@@ -70,7 +76,7 @@ export default function AddConcentrate() {
               'Алюминий',
               'Кальций',
               'Сера',
-              'Месяц',
+              'Месяц (ГГГГ-ММ)',
             ]}
             columns={columns}
             rowHeaders
@@ -87,8 +93,6 @@ export default function AddConcentrate() {
         >
           Сохранить
         </button>
-
-        {message && <p className="mt-4 text-blue-600 text-sm">{message}</p>}
       </main>
     </>
   );
