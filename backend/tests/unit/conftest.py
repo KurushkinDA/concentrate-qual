@@ -11,7 +11,7 @@ from app.core.config import settings
 from scripts.init_users import main as init_users
 
 
-@pytest_asyncio.fixture(scope="session", autouse=True)
+@pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare_database():
     assert settings.MODE == "TEST"
 
