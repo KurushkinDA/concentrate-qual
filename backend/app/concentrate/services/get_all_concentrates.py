@@ -10,7 +10,16 @@ async def get_all_concentrates_service(
     session: AsyncSession,
     report_month: str | None = None
 ) -> PaginatedResponse[SConcentrateRead]:
-    
+    """
+    Получает список всех записей концентрата, с фильтрацией по месяцу (если указан).
+
+    Args:
+        session: Асинхронная сессия SQLAlchemy.
+        report_month: Месяц в формате 'YYYY-MM' для фильтрации (опционально).
+
+    Returns:
+        PaginatedResponse[SConcentrateRead]: Список записей в формате пагинации.
+    """
     filters = {}
     if report_month:
         filters["report_month"] = report_month

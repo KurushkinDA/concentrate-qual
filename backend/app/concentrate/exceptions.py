@@ -1,4 +1,10 @@
+"""
+Исключения, связанные с качественными показателями концентрата.
+Используются в сервисах и роутах для возврата стандартных HTTP-ошибок.
+"""
+
 from fastapi import HTTPException, status
+
 
 ConcentrateNotFound = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,

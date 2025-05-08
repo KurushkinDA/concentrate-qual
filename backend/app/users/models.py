@@ -4,7 +4,12 @@ from app.core.database import Base
 from app.concentrate.models import Concentrate
 
 
-class User(Base): 
+class User(Base):
+    """
+    Модель пользователя системы.
+    Хранит данные авторизации и связывается с записями показателей (concentrates).
+    """
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -12,4 +17,3 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
 
     concentrates = relationship(Concentrate, back_populates="user")
-

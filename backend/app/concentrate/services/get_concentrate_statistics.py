@@ -13,6 +13,20 @@ async def get_concentrate_statistics_service(
     session: AsyncSession,
     report_month: str,
 ) -> ResponseWithData[SConcentrateStats]:
+    """
+    Формирует статистику по показателям концентрата за указанный месяц.
+
+    Args:
+        session: Асинхронная сессия SQLAlchemy.
+        report_month: Месяц в формате "YYYY-MM", по которому формируется отчёт.
+
+    Returns:
+        ResponseWithData[SConcentrateStats]: Объект с сообщением и статистическими данными.
+
+    Raises:
+        WrongFormatDate: Если передан неверный формат месяца.
+        NoDataFound: Если по выбранному месяцу нет данных.
+    """
     if not re.fullmatch(r"\d{4}-\d{2}", report_month):
         raise WrongFormatDate
 

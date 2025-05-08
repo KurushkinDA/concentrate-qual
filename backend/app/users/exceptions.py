@@ -1,6 +1,8 @@
+"""
+Исключения, связанные с пользователями.
+Используются в сервисах и роутах для возврата стандартных HTTP-ошибок.
+"""
 from fastapi import HTTPException, status
-
-
 
 UserErrorCreate = HTTPException(
     status_code=status.HTTP_502_BAD_GATEWAY, 

@@ -9,6 +9,17 @@ class ConcentrateDAO(BaseDAO[Concentrate]):
 
     @classmethod
     async def get_monthly_statistics(cls, session: AsyncSession, report_month: str) -> dict:
+        """
+        Возвращает статистику (среднее, минимум, максимум) по каждому показателю
+        концентрата за указанный месяц.
+
+        Args:
+            session: Асинхронная сессия SQLAlchemy.
+            report_month: Месяц в формате "YYYY-MM".
+
+        Returns:
+            dict: Словарь со статистикой по каждому полю.
+        """
         stmt = select(
             func.avg(cls.model.iron).label("average_iron"),
             func.min(cls.model.iron).label("min_iron"),

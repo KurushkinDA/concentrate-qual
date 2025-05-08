@@ -1,11 +1,19 @@
-from fastapi import FastAPI
+"""
+Точка входа в FastAPI-приложение.
 
+- Инициализирует экземпляр FastAPI.
+- Подключает роутеры пользователей и концентрата.
+- Настраивает CORS для взаимодействия с фронтендом.
+- Отключает Swagger и ReDoc в продакшене.
+"""
+
+from fastapi import FastAPI
 from app.users.router import router as router_users
 from app.concentrate.router import router as router_concentrate
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 
-
+# Инициализация FastAPI с динамической настройкой документации
 app = FastAPI(
     title="Cистема добавления данных о качественных показателях железорудного концентрата",
     docs_url=None if settings.MODE == "PROD" else "/docs",
@@ -17,12 +25,12 @@ app = FastAPI(
 app.include_router(router_users)
 app.include_router(router_concentrate)
 
-# Допустимые домены
+# Разрешённые источники (для CORS)
 origins = [
-    'http://localhost:3000'
-] 
+    'http://localhost:3000',  # Фронтенд React (локальная разработка)
+]
 
-# Настройка CORS
+# Настройка CORS — требуется для работы с куками и авторизацией между фронтом и бэком
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -33,11 +41,6 @@ app.add_middleware(
         "Set-Cookie",
         "Access-Control-Allow-Headers",
         "Access-Control-Allow-Origin",
-        "Authorization"
+        "Authorization",
     ],
 )
-
-
-
-
-

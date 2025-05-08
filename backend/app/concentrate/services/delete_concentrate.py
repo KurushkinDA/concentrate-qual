@@ -7,7 +7,19 @@ async def delete_concentrate_service(
     session: AsyncSession,
     concentrate_id: int,
 ) -> SuccessResponse:
-    
+    """
+    Удаляет запись с показателями концентрата по её ID.
+
+    Args:
+        session: Асинхронная сессия SQLAlchemy.
+        concentrate_id: Идентификатор записи для удаления.
+
+    Returns:
+        SuccessResponse: Ответ с сообщением об успешном удалении.
+
+    Raises:
+        ConcentrateNotFound: Если запись с таким ID не найдена.
+    """
     concentrate = await ConcentrateDAO.find_by_id(session, concentrate_id)
     if not concentrate:
         raise ConcentrateNotFound

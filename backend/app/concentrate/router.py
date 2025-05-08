@@ -21,6 +21,10 @@ router = APIRouter(prefix="/concentrates", tags=["Качественные по�
     "/report",
     response_model=ResponseWithData[SConcentrateStats],
     summary="Получить отчет по показателям за месяц",
+    description=(
+        "Формирует сводный отчет по содержанию элементов (Fe, Si, Al, Ca, S) "
+        "в концентрате за указанный месяц. Возвращает среднее, минимальное и максимальное значения."
+    ),
     status_code=status.HTTP_200_OK
 )
 async def get_concentrate_statistics(
@@ -30,10 +34,16 @@ async def get_concentrate_statistics(
 ):
     return await get_concentrate_statistics_service(session, report_month)
 
-@router.post("", 
-             response_model=ResponseWithData[SConcentrateRead],
-             status_code=status.HTTP_201_CREATED,
-             summary="Добавить")
+@router.post(
+    "",
+    response_model=ResponseWithData[SConcentrateRead],
+    status_code=status.HTTP_201_CREATED,
+    summary="Добавить запись о показателях",
+    description=(
+        "Добавляет новую запись о качественных показателях концентрата (железо, кремний, "
+        "алюминий, кальций, сера) за указанный месяц от текущего пользователя."
+    ),
+)
 async def create_concentrate(
     data: SConcentrateCreate,
     response: Response,
@@ -47,9 +57,12 @@ async def create_concentrate(
     )
 
 
-@router.get("/{concentrate_id}", 
-            response_model=ResponseWithData[SConcentrateRead],
-            summary="Получить запись по ID")
+@router.get(
+    "/{concentrate_id}",
+    response_model=ResponseWithData[SConcentrateRead],
+    summary="Получить запись по ID",
+    description="Возвращает данные о показателях концентрата по указанному ID. Требуется авторизация.",
+)
 async def get_concentrate_by_id(
     concentrate_id: int,
     session: AsyncSession = Depends(get_db),
@@ -59,9 +72,12 @@ async def get_concentrate_by_id(
     return await get_concentrate_by_id_service(concentrate_id, session)
 
 
-@router.put("/{concentrate_id}", 
-            response_model=ResponseWithData[SConcentrateRead],
-            summary="Обновить")
+@router.put(
+    "/{concentrate_id}",
+    response_model=ResponseWithData[SConcentrateRead],
+    summary="Обновить запись по ID",
+    description="Обновляет данные показателей концентрата по ID. Требуется авторизация. Возвращает обновлённую запись.",
+)
 async def update_concentrate(
     concentrate_id: int,
     data: SConcentrateUpdate,
@@ -89,10 +105,11 @@ async def delete_concentrate(
     )
 
 
-@router.get(
-    "",
-    response_model=PaginatedResponse[SConcentrateRead],
-    summary="Получить все записи"
+@router.delete(
+    "/{concentrate_id}",
+    response_model=SuccessResponse,
+    summary="Удалить запись по ID",
+    description="Удаляет запись о показателях концентрата по её ID. Требуется авторизация.",
 )
 async def get_all_concentrates(
     report_month: Optional[str] = None,

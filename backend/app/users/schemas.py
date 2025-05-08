@@ -1,16 +1,36 @@
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, Field, constr
 from typing import Annotated
 
-class SUserAuth(BaseModel): 
-    username: str
-    password: str
+class SUserAuth(BaseModel):
+    """Модель авторизации пользователя (логин и пароль)."""
+    username: str = Field(..., description="Имя пользователя для входа")
+    password: str = Field(..., description="Пароль пользователя")
+
 
 class SUserCreate(BaseModel):
-    username: Annotated[str, constr(strip_whitespace=True, min_length=3, max_length=50)]
-    password: Annotated[str, constr(min_length=6, max_length=100)]
+    """Модель создания нового пользователя с валидацией."""
+    username: Annotated[
+        str,
+        Field(
+            min_length=3,
+            max_length=50,
+            strip_whitespace=True,
+            description="Имя пользователя (от 3 до 50 символов)"
+        )
+    ]
+    password: Annotated[
+        str,
+        Field(
+            min_length=6,
+            max_length=100,
+            description="Пароль пользователя (от 6 символов)"
+        )
+    ]
+
 
 class SUserPublic(BaseModel):
-    id: int
-    username: str
+    """Публичная информация о пользователе, возвращаемая в ответах."""
+    id: int = Field(..., description="Уникальный идентификатор пользователя")
+    username: str = Field(..., description="Имя пользователя")
 
     model_config = {"from_attributes": True}

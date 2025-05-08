@@ -8,7 +8,24 @@ from app.users.models import User
 
 
 async def create_user_service(data: SUserCreate, session: AsyncSession) -> User:
-    
+    """
+    Создаёт нового пользователя в базе данных
+
+    Проверяет, существует ли уже пользователь с таким логином.
+    В случае отсутствия — хеширует пароль и добавляет пользователя в базу.
+
+    Args:
+        data: Данные для создания пользователя (username и password).
+        session: Асинхронная сессия SQLAlchemy.
+
+    Raises:
+        UserAlreadyExist: Если пользователь с таким логином уже существует.
+        UserErrorCreate: Если не удалось создать пользователя.
+
+    Returns:
+        SuccessResponse: Подтверждение успешного создания пользователя.
+    """
+
     # Проверка пользователя с таким логином
     has_username = await UserDAO.find_one_or_none(session, username=data.username)
     if has_username: 

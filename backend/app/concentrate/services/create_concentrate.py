@@ -9,6 +9,17 @@ async def create_concentrate_service(
     data: SConcentrateCreate,
     user_id: int
 ) -> ResponseWithData[SConcentrateRead]: 
+    """
+    Создаёт запись с показателями концентрата в базе данных.
+
+    Args:
+        session: Асинхронная сессия SQLAlchemy.
+        data: Данные для создания показателей.
+        user_id: ID пользователя, добавившего показатели.
+
+    Returns:
+        ResponseWithData[SConcentrateRead]: Ответ с сообщением об успехе и созданными данными.
+    """
     new_concentrate = await ConcentrateDAO.add(
         session,
         name=data.name,
