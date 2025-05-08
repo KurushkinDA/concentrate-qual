@@ -9,11 +9,13 @@ BaseDAO — универсальный базовый класс для рабо
 Все методы работают асинхронно с использованием SQLAlchemy AsyncSession.
 """
 
-from typing import TypeVar, Generic, Type, Optional, Sequence, List
-from sqlalchemy import select, insert
+from typing import Generic, List, Optional, Sequence, Type, TypeVar
+
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 T = TypeVar("T")
+
 
 class BaseDAO(Generic[T]):
     model: Type[T]
@@ -34,10 +36,7 @@ class BaseDAO(Generic[T]):
 
     @classmethod
     async def find_all(
-        cls,
-        session: AsyncSession,
-        options: Optional[list] = None,
-        **filters
+        cls, session: AsyncSession, options: Optional[list] = None, **filters
     ) -> Sequence[T]:
         """
         Найти все записи по фильтрам. Поддерживает опции (например, joinedload).
@@ -53,7 +52,7 @@ class BaseDAO(Generic[T]):
     @classmethod
     async def find_by_ids(cls, session: AsyncSession, ids: List[int]) -> Sequence[T]:
         """Найти все записи, ID которых входят в указанный список."""
-        query = select(cls.model).where(cls.model.id.in_(ids))  # type: ignore[attr-defined]
+        query = select(cls.model).where(cls.model.id.in_(ids))  # type: ignore
         result = await session.execute(query)
         return result.scalars().all()
 

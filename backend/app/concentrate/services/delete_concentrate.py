@@ -1,7 +1,9 @@
-from app.concentrate.exceptions import ConcentrateNotFound
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.concentrate.dao import ConcentrateDAO
+from app.concentrate.exceptions import ConcentrateNotFound
 from app.schemas import SuccessResponse
+
 
 async def delete_concentrate_service(
     session: AsyncSession,

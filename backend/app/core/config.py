@@ -6,14 +6,16 @@
 """
 
 from typing import Literal
-from pydantic_settings import BaseSettings
-from pydantic import ConfigDict
 
-class Settings(BaseSettings): 
+from pydantic import ConfigDict
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
     # Основные параметры проекта
     PROJECT_NAME: str
-    MODE: Literal['DEV', 'TEST', 'PROD']
-    LOG_LEVEL: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+    MODE: Literal["DEV", "TEST", "PROD"]
+    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
     # Настройки основной базы данных
     DB_HOST: str
@@ -53,6 +55,7 @@ class Settings(BaseSettings):
             f"postgresql+asyncpg://{self.TEST_DB_USER}:{self.TEST_DB_PASS}"
             f"@{self.TEST_DB_HOST}:{self.TEST_DB_PORT}/{self.TEST_DB_NAME}"
         )
+
 
 # Инициализация глобального объекта настроек
 settings = Settings()  # type: ignore

@@ -8,9 +8,10 @@
 - get_db — зависимость FastAPI для получения сессии.
 """
 
-from sqlalchemy import NullPool, create_engine
+from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+
 from app.core.config import settings
 
 # Формирование URL подключения в зависимости от режима
@@ -26,10 +27,13 @@ else:
 engine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
+
 # Базовый класс для всех моделей
 class Base(DeclarativeBase):
     """Базовый класс для декларативных моделей SQLAlchemy."""
+
     pass
+
 
 # Зависимость для FastAPI — предоставляет асинхронную сессию
 async def get_db() -> AsyncSession:

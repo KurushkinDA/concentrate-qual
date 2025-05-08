@@ -1,10 +1,9 @@
 import re
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.concentrate.dao import ConcentrateDAO
 from app.concentrate.exceptions import NoDataFound, WrongFormatDate
-from app.concentrate.models import Concentrate
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
 from app.concentrate.schemas import SConcentrateStats
 from app.schemas import ResponseWithData
 
@@ -21,7 +20,8 @@ async def get_concentrate_statistics_service(
         report_month: Месяц в формате "YYYY-MM", по которому формируется отчёт.
 
     Returns:
-        ResponseWithData[SConcentrateStats]: Объект с сообщением и статистическими данными.
+        ResponseWithData[SConcentrateStats]: Объект с сообщением и
+          статистическими данными.
 
     Raises:
         WrongFormatDate: Если передан неверный формат месяца.
@@ -36,7 +36,4 @@ async def get_concentrate_statistics_service(
         raise NoDataFound
 
     stats = SConcentrateStats.model_validate(data)
-    return ResponseWithData(
-        message="Отчёт успешно сформирован",
-        data=stats
-    )
+    return ResponseWithData(message="Отчёт успешно сформирован", data=stats)

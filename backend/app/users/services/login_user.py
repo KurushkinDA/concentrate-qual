@@ -1,15 +1,16 @@
-from app.schemas import SuccessResponse
 from fastapi import Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.users.auth import authenticate_user, create_access_token, create_refresh_token
+
 from app.core.config import settings
-from app.users.schemas import SUserAuth
+from app.schemas import SuccessResponse
+from app.users.auth import authenticate_user, create_access_token, create_refresh_token
 from app.users.exceptions import IncorrectUsernameOrPasswordException
+from app.users.schemas import SUserAuth
+
 
 async def login_user_service(
-        user_data: SUserAuth, 
-        response: Response, 
-        session: AsyncSession) -> SuccessResponse:
+    user_data: SUserAuth, response: Response, session: AsyncSession
+) -> SuccessResponse:
     """
     Аутентификация пользователя и установка токенов в куки.
 
@@ -35,7 +36,11 @@ async def login_user_service(
     refresh_token = create_refresh_token({"sub": str(user.id)})
 
     # Установка кук с токенами
-    response.set_cookie(f"{settings.PROJECT_NAME}_access_token", access_token, httponly=True)
-    response.set_cookie(f"{settings.PROJECT_NAME}_refresh_token", refresh_token, httponly=True)
+    response.set_cookie(
+        f"{settings.PROJECT_NAME}_access_token", access_token, httponly=True
+    )
+    response.set_cookie(
+        f"{settings.PROJECT_NAME}_refresh_token", refresh_token, httponly=True
+    )
 
     return SuccessResponse(message="Вы авторизовались")

@@ -5,10 +5,8 @@
 
 from fastapi import HTTPException, status
 
-
 ConcentrateNotFound = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND,
-    detail="Запись не найдена"
+    status_code=status.HTTP_404_NOT_FOUND, detail="Запись не найдена"
 )
 
 WrongFormatDate = HTTPException(

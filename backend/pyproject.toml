@@ -21,7 +21,28 @@ pyjwt = "^2.10.1"
 pytest = "^8.3.5"
 pytest-asyncio = "^0.26.0"
 httpx = "^0.28.1"
+black = "^25.1.0"
+flake8 = "^7.2.0"
+autoflake = "^2.3.1"
+isort = "^6.0.1"
+pyright = "^1.1.400"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.autoflake]
+check_diff = true
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 88

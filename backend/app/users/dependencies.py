@@ -1,11 +1,12 @@
-from app.users.exceptions import TokenExpiredException
-from fastapi import Cookie, Depends, HTTPException, Request, Response, status
+from fastapi import Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import get_db
+
 from app.core.config import settings
-from app.users.auth import get_user_from_token, decode_token, create_access_token
-from app.users.models import User
+from app.core.database import get_db
+from app.users.auth import create_access_token, decode_token, get_user_from_token
 from app.users.dao import UserDAO
+from app.users.exceptions import TokenExpiredException
+from app.users.models import User
 
 
 async def get_current_user(
@@ -32,8 +33,8 @@ async def get_current_user(
         TokenExpiredException: Если пользователь не авторизован
     """
 
-    access_token = request.cookies.get(f'{settings.PROJECT_NAME}_access_token')
-    refresh_token = request.cookies.get(f'{settings.PROJECT_NAME}_refresh_token')
+    access_token = request.cookies.get(f"{settings.PROJECT_NAME}_access_token")
+    refresh_token = request.cookies.get(f"{settings.PROJECT_NAME}_refresh_token")
 
     user = None
 
@@ -51,7 +52,11 @@ async def get_current_user(
                 user = await UserDAO.find_by_id(session, int(user_id))
                 if user:
                     new_access_token = create_access_token({"sub": str(user.id)})
-                    response.set_cookie(f"{settings.PROJECT_NAME}_access_token", new_access_token, httponly=True)
+                    response.set_cookie(
+                        f"{settings.PROJECT_NAME}_access_token",
+                        new_access_token,
+                        httponly=True,
+                    )
         except Exception:
             user = None
 

@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
 from app.schemas import SuccessResponse
-from app.users.schemas import SUserAuth, SUserCreate
-from app.users.services.create_user import create_user_service
+from app.users.schemas import SUserAuth
 from app.users.services.login_user import login_user_service
 from app.users.services.logout_user import logout_user_service
-from app.core.database import get_db
 
 router = APIRouter(prefix="/users", tags=["Пользователи"])
 
@@ -17,9 +17,7 @@ router = APIRouter(prefix="/users", tags=["Пользователи"])
     response_model=SuccessResponse,
 )
 async def login_user(
-    response: Response,
-    user_data: SUserAuth,
-    session: AsyncSession = Depends(get_db)
+    response: Response, user_data: SUserAuth, session: AsyncSession = Depends(get_db)
 ):
     return await login_user_service(user_data, response, session)
 

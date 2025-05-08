@@ -1,24 +1,32 @@
-from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
+
 import jwt
-from app.users.dao import UserDAO
-from app.core.config import settings
-from app.users.exceptions import IncorrectTokenFormatException, IncorrectUsernameOrPasswordException, TokenExpiredException
+from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
+from app.users.dao import UserDAO
+from app.users.exceptions import (
+    IncorrectTokenFormatException,
+    IncorrectUsernameOrPasswordException,
+    TokenExpiredException,
+)
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def get_password_hash(password: str) -> str:
     """
     Получение хешированного пароля
 
-    Args: 
+    Args:
         password: пароль
 
-    Returns: 
+    Returns:
         str: хешированный пароль
     """
     return pwd_context.hash(password)
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
@@ -45,12 +53,15 @@ def create_access_token(data: dict) -> str:
         str: access токен
     """
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode, settings.AUTH_SECRET_KEY, algorithm=settings.AUTH_ALGORITHM
     )
     return encoded_jwt
+
 
 def create_refresh_token(data: dict) -> str:
     """
@@ -63,7 +74,9 @@ def create_refresh_token(data: dict) -> str:
         str: refresh токен
     """
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = datetime.now(timezone.utc) + timedelta(
+        days=settings.REFRESH_TOKEN_EXPIRE_DAYS
+    )
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode, settings.AUTH_SECRET_KEY, algorithm=settings.AUTH_ALGORITHM
@@ -83,19 +96,20 @@ def decode_token(token: str) -> dict:
 
     Raises:
         TokenExpiredException: Если срок действия токена истёк
-        IncorrectTokenFormatException: Если токен недействителен или имеет неверный формат
+        IncorrectTokenFormatException: Если токен недействителен или
+          имеет неверный формат
     """
     try:
         payload = jwt.decode(
             token, settings.AUTH_SECRET_KEY, algorithms=[settings.AUTH_ALGORITHM]
         )
         return payload
-    
+
     except jwt.ExpiredSignatureError:
         raise TokenExpiredException
     except jwt.PyJWTError:
         raise IncorrectTokenFormatException
-    
+
 
 async def get_user_from_token(token: str):
     """
@@ -108,19 +122,21 @@ async def get_user_from_token(token: str):
         User: Объект пользователя, соответствующий ID в токене
 
     Raises:
-        IncorrectUsernameOrPasswordException: Если токен некорректен или пользователь не найден
+        IncorrectUsernameOrPasswordException: Если токен некорректен
+        или пользователь не найден
     """
     payload = decode_token(token)
 
     user_id: str = payload.get("sub")
     if not user_id:
         raise IncorrectUsernameOrPasswordException
-    
+
     user = await UserDAO.find_by_id(int(user_id))
     if not user:
         raise IncorrectUsernameOrPasswordException
 
     return user
+
 
 async def authenticate_user(username: str, password: str, session: AsyncSession):
     """
@@ -129,7 +145,7 @@ async def authenticate_user(username: str, password: str, session: AsyncSession)
     Args:
         username: Логин
         password: Обычный (нехэшированный) пароль
-        session: Сессия 
+        session: Сессия
 
     Returns:
         User | None: Объект пользователя, если аутентификация прошла успешно, иначе None
@@ -138,10 +154,8 @@ async def authenticate_user(username: str, password: str, session: AsyncSession)
     user = await UserDAO.find_one_or_none(session, username=username)
     if not user:
         return None
-    
+
     if not verify_password(password, user.hashed_password):
         return None
-    
-    return user
 
-      
+    return user

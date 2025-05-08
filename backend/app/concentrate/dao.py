@@ -1,14 +1,17 @@
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.dao import BaseDAO
 from app.concentrate.models import Concentrate
+from app.core.dao import BaseDAO
+
 
 class ConcentrateDAO(BaseDAO[Concentrate]):
     model = Concentrate
 
     @classmethod
-    async def get_monthly_statistics(cls, session: AsyncSession, report_month: str) -> dict:
+    async def get_monthly_statistics(
+        cls, session: AsyncSession, report_month: str
+    ) -> dict:
         """
         Возвращает статистику (среднее, минимум, максимум) по каждому показателю
         концентрата за указанный месяц.

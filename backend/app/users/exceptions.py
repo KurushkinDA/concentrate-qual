@@ -2,39 +2,38 @@
 Исключения, связанные с пользователями.
 Используются в сервисах и роутах для возврата стандартных HTTP-ошибок.
 """
+
 from fastapi import HTTPException, status
 
 UserErrorCreate = HTTPException(
-    status_code=status.HTTP_502_BAD_GATEWAY, 
-    detail="Ошибка создания пользователя"
+    status_code=status.HTTP_502_BAD_GATEWAY, detail="Ошибка создания пользователя"
 )
 
 UserAlreadyExist = HTTPException(
-    status_code=status.HTTP_409_CONFLICT, 
-    detail="Пользователь с таким логином уже существует"
+    status_code=status.HTTP_409_CONFLICT,
+    detail="Пользователь с таким логином уже существует",
 )
 
 UserIsNotPresent = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, 
-    detail="Не представлен"
+    status_code=status.HTTP_401_UNAUTHORIZED, detail="Не представлен"
 )
 
 IncorrectTokenFormatException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, 
-    detail='Неверный формат токена',
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Неверный формат токена",
 )
 
 TokenAbsentException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, 
-    detail='Токен отсутствует',
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Токен отсутствует",
 )
 
 TokenExpiredException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, 
-    detail='Вы не авторизованы',
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Вы не авторизованы",
 )
 
 IncorrectUsernameOrPasswordException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, 
-    detail='Неверный логин или пароль',
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Неверный логин или пароль",
 )

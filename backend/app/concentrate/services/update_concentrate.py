@@ -1,8 +1,10 @@
-from app.concentrate.exceptions import ConcentrateNotFound
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.concentrate.dao import ConcentrateDAO
-from app.concentrate.schemas import SConcentrateUpdate, SConcentrateRead
+from app.concentrate.exceptions import ConcentrateNotFound
+from app.concentrate.schemas import SConcentrateRead, SConcentrateUpdate
 from app.schemas import ResponseWithData
+
 
 async def update_concentrate_service(
     concentrate_id: int,
@@ -31,5 +33,5 @@ async def update_concentrate_service(
     updated = await ConcentrateDAO.update(session, concentrate_id, **data.model_dump())
     return ResponseWithData(
         message="Показатели успешно обновлены",
-        data=SConcentrateRead.model_validate(updated)
+        data=SConcentrateRead.model_validate(updated),
     )

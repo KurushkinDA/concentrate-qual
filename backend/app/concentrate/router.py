@@ -1,20 +1,28 @@
-from typing import List, Optional
+from typing import Optional
+
+from fastapi import APIRouter, Depends, Response, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.concentrate.schemas import (
+    SConcentrateCreate,
+    SConcentrateRead,
+    SConcentrateStats,
+    SConcentrateUpdate,
+)
+from app.concentrate.services.create_concentrate import create_concentrate_service
 from app.concentrate.services.delete_concentrate import delete_concentrate_service
 from app.concentrate.services.get_all_concentrates import get_all_concentrates_service
 from app.concentrate.services.get_concentrate_by_id import get_concentrate_by_id_service
-from app.concentrate.services.get_concentrate_statistics import get_concentrate_statistics_service
+from app.concentrate.services.get_concentrate_statistics import (
+    get_concentrate_statistics_service,
+)
 from app.concentrate.services.update_concentrate import update_concentrate_service
-from fastapi import APIRouter, Depends, Request, Response, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
+from app.schemas import ResponseWithData, SuccessResponse
 from app.users.dependencies import get_current_user
 from app.users.models import User
-from app.concentrate.schemas import SConcentrateCreate, SConcentrateRead, SConcentrateStats, SConcentrateUpdate
-from app.schemas import PaginatedResponse, ResponseWithData, SuccessResponse
-from app.concentrate.services.create_concentrate import create_concentrate_service
 
 router = APIRouter(prefix="/concentrates", tags=["Качественные показатели"])
-
 
 
 @router.get(
@@ -23,9 +31,10 @@ router = APIRouter(prefix="/concentrates", tags=["Качественные по�
     summary="Получить отчет по показателям за месяц",
     description=(
         "Формирует сводный отчет по содержанию элементов (Fe, Si, Al, Ca, S) "
-        "в концентрате за указанный месяц. Возвращает среднее, минимальное и максимальное значения."
+        "в концентрате за указанный месяц. Возвращает среднее, минимальное и "
+        "максимальное значения."
     ),
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def get_concentrate_statistics(
     report_month: str,
@@ -34,14 +43,16 @@ async def get_concentrate_statistics(
 ):
     return await get_concentrate_statistics_service(session, report_month)
 
+
 @router.post(
     "",
     response_model=ResponseWithData[SConcentrateRead],
     status_code=status.HTTP_201_CREATED,
     summary="Добавить запись о показателях",
     description=(
-        "Добавляет новую запись о качественных показателях концентрата (железо, кремний, "
-        "алюминий, кальций, сера) за указанный месяц от текущего пользователя."
+        "Добавляет новую запись о качественных показателях концентрата (железо,"
+        " кремний, алюминий, кальций, сера) за указанный месяц от текущего "
+        "пользователя."
     ),
 )
 async def create_concentrate(
@@ -51,9 +62,7 @@ async def create_concentrate(
     current_user: User = Depends(get_current_user),
 ):
     return await create_concentrate_service(
-        data=data, 
-        session=session, 
-        user_id=current_user.id
+        data=data, session=session, user_id=current_user.id
     )
 
 
@@ -61,7 +70,10 @@ async def create_concentrate(
     "/{concentrate_id}",
     response_model=ResponseWithData[SConcentrateRead],
     summary="Получить запись по ID",
-    description="Возвращает данные о показателях концентрата по указанному ID. Требуется авторизация.",
+    description=(
+        "Возвращает данные о показателях концентрата по указанному ID."
+        " Требуется авторизация.",
+    )
 )
 async def get_concentrate_by_id(
     concentrate_id: int,
@@ -76,7 +88,10 @@ async def get_concentrate_by_id(
     "/{concentrate_id}",
     response_model=ResponseWithData[SConcentrateRead],
     summary="Обновить запись по ID",
-    description="Обновляет данные показателей концентрата по ID. Требуется авторизация. Возвращает обновлённую запись.",
+    description=(
+        "Обновляет данные показателей концентрата по ID. Требуется "
+        "авторизация. Возвращает обновлённую запись.",
+    ),
 )
 async def update_concentrate(
     concentrate_id: int,
@@ -91,13 +106,13 @@ async def update_concentrate(
     )
 
 
-@router.delete("/{concentrate_id}", 
-               response_model=SuccessResponse, 
-               summary="Удалить по ID")
+@router.delete(
+    "/{concentrate_id}", response_model=SuccessResponse, summary="Удалить по ID"
+)
 async def delete_concentrate(
     concentrate_id: int,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await delete_concentrate_service(
         session=session,
@@ -109,13 +124,14 @@ async def delete_concentrate(
     "/{concentrate_id}",
     response_model=SuccessResponse,
     summary="Удалить запись по ID",
-    description="Удаляет запись о показателях концентрата по её ID. Требуется авторизация.",
+    description=(
+        "Удаляет запись о показателях концентрата по её ID. "
+        "Требуется авторизация."
+    ),
 )
 async def get_all_concentrates(
     report_month: Optional[str] = None,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await get_all_concentrates_service(session, report_month)
-
-
