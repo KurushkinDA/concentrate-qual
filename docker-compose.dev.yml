@@ -3,11 +3,11 @@ services:
   db:
     image: postgres:17
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "54322:5432"
+      - "54322:${DB_PORT}"
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -17,8 +17,12 @@ services:
       dockerfile: backend/Dockerfile
     volumes:
       - ./backend:/app
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
+    command: >
+      sh -c "poetry run alembic upgrade head &&
+             poetry run python -m scripts.init_users &&
+             poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     depends_on:
