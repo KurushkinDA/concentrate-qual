@@ -10,7 +10,7 @@ from app.users.models import User
 async def create_user_service(data: SUserCreate, session: AsyncSession) -> User:
     
     # Проверка пользователя с таким логином
-    has_username = UserDAO.find_one_or_none(AsyncSession, username=data.username)
+    has_username = await UserDAO.find_one_or_none(session, username=data.username)
     if has_username: 
         raise UserAlreadyExist
     

@@ -17,7 +17,10 @@ services:
       dockerfile: backend/Dockerfile
     volumes:
       - ./backend:/app
-    command: sh -c "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: >
+      sh -c "poetry run alembic upgrade head &&
+             poetry run python -m scripts.init_users &&
+             poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     env_file:
       - .env
     ports:
