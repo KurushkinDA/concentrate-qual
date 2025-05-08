@@ -21,9 +21,9 @@ class SUserCreate(BaseModel):
     password: Annotated[
         str,
         Field(
-            min_length=6,
+            min_length=3,
             max_length=100,
-            description="Пароль пользователя (от 6 символов)"
+            description="Пароль пользователя (от 3 символов)"
         )
     ]
 
