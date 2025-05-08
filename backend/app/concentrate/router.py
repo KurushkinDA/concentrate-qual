@@ -18,7 +18,7 @@ from app.concentrate.services.get_concentrate_statistics import (
 )
 from app.concentrate.services.update_concentrate import update_concentrate_service
 from app.core.database import get_db
-from app.schemas import ResponseWithData, SuccessResponse
+from app.schemas import PaginatedResponse, ResponseWithData, SuccessResponse
 from app.users.dependencies import get_current_user
 from app.users.models import User
 
@@ -72,7 +72,7 @@ async def create_concentrate(
     summary="Получить запись по ID",
     description=(
         "Возвращает данные о показателях концентрата по указанному ID."
-        " Требуется авторизация.",
+        " Требуется авторизация."
     )
 )
 async def get_concentrate_by_id(
@@ -90,7 +90,7 @@ async def get_concentrate_by_id(
     summary="Обновить запись по ID",
     description=(
         "Обновляет данные показателей концентрата по ID. Требуется "
-        "авторизация. Возвращает обновлённую запись.",
+        "авторизация. Возвращает обновлённую запись."
     ),
 )
 async def update_concentrate(
@@ -107,7 +107,12 @@ async def update_concentrate(
 
 
 @router.delete(
-    "/{concentrate_id}", response_model=SuccessResponse, summary="Удалить по ID"
+    "/{concentrate_id}", 
+    response_model=SuccessResponse, 
+    summary="Удалить по ID", 
+    description=(
+        "Удаляет запись по ID. Требуется авторизация"
+    )
 )
 async def delete_concentrate(
     concentrate_id: int,
@@ -120,12 +125,12 @@ async def delete_concentrate(
     )
 
 
-@router.delete(
-    "/{concentrate_id}",
-    response_model=SuccessResponse,
-    summary="Удалить запись по ID",
+@router.get(
+    "",
+    response_model=PaginatedResponse,
+    summary="Получить все записи",
     description=(
-        "Удаляет запись о показателях концентрата по её ID. "
+        "Получает все записи списком. Фильтрация по месяцу."
         "Требуется авторизация."
     ),
 )
